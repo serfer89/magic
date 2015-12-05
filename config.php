@@ -43,7 +43,9 @@ if ($result->num_rows > 0) {
 
 
 
-}}
+}
+else {$number=1;}
+}
 
 function first_num($category)
 
@@ -74,6 +76,7 @@ if ($result->num_rows > 0) {
 	global $mysqli;
 	
 	$sql="SELECT `".$what."` FROM `port_menu` WHERE `".$where."` LIKE '".$url."' ";
+
 	$result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
@@ -134,6 +137,37 @@ class port_class{
 	var $right;
 	
 	
+	function get_one_img($what, $id)
+	{
+		
+		global $mysqli;
+$sql = "SELECT * FROM `portfolio` WHERE `".$what."` = '".$id."'";
+$result = $mysqli->query($sql);
+if ($result->num_rows > 0) 
+{
+
+    while($row = $result->fetch_assoc()) {
+		
+		$id=$row['id'];
+		$file_name=$row['file_name'];
+		$order=$row['number'];
+		$path=$row['path'];
+		$capture=$row['capture'];
+		$category=$row['category'];
+
+    }	
+	$this->id=$id;
+	$this->path=$path;
+	$this->order=$order;
+	$this->file_name=$file_name;
+	$this->capture=$capture;
+	$this->category=$category;
+
+	
+}
+		
+	}
+	
 	function get_img($what, $id)
 	
 	{
@@ -146,10 +180,13 @@ if ($result->num_rows > 0)
 
     while($row = $result->fetch_assoc()) {
 		
+		
+		
+		
 
-        echo "<div  class=\"img_thumb\" onclick=\"slider(".$row["id"].")\">
-		<img style=\"width:150px\" src=\"/".$row["path"]."/".$row["file_name"]."\" alt=\"".$row["file_name"]."\">
-		<span>".$row['capture']."</span>
+        echo "<div  class=\"img_thumb\" onclick=\"popup(".$row["id"].")\">
+		<img src=\"/".$row["path"]."/".$row["file_name"]."\" alt=\"".$row["file_name"]."\">
+		</br><span>".$row['capture']."</span>
 		</div>
 
 		";
