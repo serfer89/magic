@@ -76,7 +76,7 @@ if ($result->num_rows > 0) {
 	global $mysqli;
 	
 	$sql="SELECT `".$what."` FROM `port_menu` WHERE `".$where."` LIKE '".$url."' ";
-
+//echo $sql;
 	$result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
