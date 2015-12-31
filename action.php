@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta http-equiv="refresh" content="2; url=http://magicdecor.esy.es/tree/admin.php?news=show_all" />
+<meta http-equiv="refresh" content="2; url=http://magicdecor.com.ua/admin.php" />
 </head>
 <body>
 <?php
@@ -20,15 +20,17 @@ $headers = 'From: Magicbot ' . "\r\n" .
     'X-Mailer: PHP/' . phpversion();
 //mail("".$email."", "".$product_name."", "С мобильного приложения\nДата: ".$conv."  \nИмя: ".$user_name." \nТелефон: ".$user_phone." \nЦена: ".number_format($product_price, 0, ',', ' ')." грн ", $headers);
 //$email="magic.decorkiev@gmail.com";
-$email="sergpavlov89@gmail.com";
+$email2="sergpavlov89@gmail.com";
+$email="magic.decorkiev@gmail.com";
 if(
+mail("".$email2."", "Сообщение с сайта", "Вам пришло новое сообщение: \r\n".$message."", $headers).
 mail("".$email."", "Сообщение с сайта", "Вам пришло новое сообщение: \r\n".$message."", $headers)
 )
 
 {
     echo "Запрос отправлен успешно!";
-header("Location:/tree/index.php?mes=mail_ok");}
-else {header("Location:/tree/index.php?mes=mail_er");}
+header("Location:/index.php?mes=mail_ok");}
+else {header("Location:/index.php?mes=mail_er");}
 //mail($email, "Заявка с сайта", $message, $_POST['email'], "-fwebmaster@$SERVER_NAME");
 }	
 
@@ -144,7 +146,7 @@ $_POST['add']=0;
 }
 
 } else {
-    echo "Файл - ".$filename2." не существует!!!";
+    echo "";
 }
 
 
@@ -279,43 +281,60 @@ if (isset($_POST['add_photo_port']))
 	*/
 	$name=$_POST['select'];
 	$text=$_POST['text'];
-
-	$u=new port_menu();
-	$u->current_menu($name, 'url', 'id');
- $apend=date('dHi').rand(100,1000);
 	
-$uploaddir = "../tree/portfolio/img/".$u->url."/";
+	$sub=$_POST['get_sub'];
+
+
+	
+
+
+  foreach ($_FILES['uploadfile']['name'] as $k=>$v)
+  {
+
+  $u=new port_menu();
+	$u->current_menu($name, 'url', 'id');
+	
+	 $uploaddir = "../tree/portfolio/img/".$u->url."/";
 $uploaddir2 = "tree/portfolio/img/".$u->url;
-$uploaddir3 = "../tree/portfolio/img/".$u->url."/thumb/";
+$uploaddir3 = "../tree/portfolio/img/".$u->url."/thumb/"; 
+	  
 
-$uploadfile = $uploaddir.$apend.basename($_FILES['uploadfile']['name']);
-$uploadfile2 = $uploaddir3.$apend.basename($_FILES['uploadfile']['name']);
+ $apend=date('dHi').rand(100,1000);	  
+$uploadfile = $uploaddir.$apend.basename($_FILES['uploadfile']['name'][$k]);
+$uploadfile2 = $uploaddir3.$apend.basename($_FILES['uploadfile']['name'][$k]);
 
-$file=$apend.basename($_FILES['uploadfile']['name']);
-$u->last_num($u->url);
+$file=$apend.basename($_FILES['uploadfile']['name'][$k]);
+$u->last_num($u->url, $sub);
+
 $last_num=$u->number+1;
 
    $image = new SimpleImage();
-   $image->load($_FILES['uploadfile']['tmp_name']);
-   $image->resizeToWidth(150);
+   $image->load($_FILES['uploadfile']['tmp_name'][$k]);
+   $image->resizeToWidth(400);
    $image->save($uploadfile2);
 
 // Копируем файл из каталога для временного хранения файлов:
 
-if (move_uploaded_file($_FILES['uploadfile']['tmp_name'], $uploadfile))
+if (move_uploaded_file($_FILES['uploadfile']['tmp_name'][$k], $uploadfile))
 {
 echo "<h3>Файл успешно загружен на сервер</h3>";
-$sql="INSERT INTO `portfolio`(`category`, `file_name`, `capture`, `number`, `path`) 
+if (isset($sub) && $sub!=''){
+$sql="INSERT INTO `portfolio`(`category`, `file_name`, `capture`, `number`, `path`, `sub`) 
+VALUES ('".$u->url."', '".$file."', '".$text."', '".$last_num."', '".$uploaddir2."', '".$sub."')";}
+else {
+	$sql="INSERT INTO `portfolio`(`category`, `file_name`, `capture`, `number`, `path`) 
 VALUES ('".$u->url."', '".$file."', '".$text."', '".$last_num."', '".$uploaddir2."')";
+}
 
 if ($mysqli->query($sql) === TRUE) {
     echo "Запись добавлена успешно!";
-	$mysqli->close();
+	//$mysqli->close();
 } else 
 {
     echo "Error: " . $sql . "<br>" . $conn->mysqli_error;
+
 $_POST['add']=0;
-	$mysqli->close();
+	//$mysqli->close();
 }
 
 
@@ -326,14 +345,14 @@ else { echo "<h3>Ошибка! Не удалось загрузить файл �
 // Выводим информацию о загруженном файле:
  
 echo "<h3>Информация о загруженном на сервер файле: </h3>";
-echo "<p><b>Оригинальное имя загруженного файла: ".$_FILES['uploadfile']['name']."</b></p>";
-echo "<p><b>Mime-тип загруженного файла: ".$_FILES['uploadfile']['type']."</b></p>";
-echo "<p><b>Размер загруженного файла в байтах: ".$_FILES['uploadfile']['size']."</b></p>";
-echo "<p><b>Временное имя файла: ".$_FILES['uploadfile']['tmp_name']."</b></p>";
+echo "<p><b>Оригинальное имя загруженного файла: ".$_FILES['uploadfile']['name'][$k]."</b></p>";
+echo "<p><b>Mime-тип загруженного файла: ".$_FILES['uploadfile']['type'][$k]."</b></p>";
+echo "<p><b>Размер загруженного файла в байтах: ".$_FILES['uploadfile']['size'][$k]."</b></p>";
+echo "<p><b>Временное имя файла: ".$_FILES['uploadfile']['tmp_name'][$k]."</b></p>";
 echo $uploaddir; 
 
 }
-
+	}
 
 
 ?>
