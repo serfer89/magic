@@ -16,7 +16,7 @@ function slider(id)
 
 $.ajax({
                         type: "POST",
-                        url: "../sys/php.php",
+                        url: "./sys/php.php",
                         data: { action: 'slider', id: id},
                         cache: false,
                         success: function(responce){  $('div[name="slider"]').html(responce); }
@@ -36,7 +36,7 @@ function left(id)
 {
 $.ajax({
                         type: "POST",
-                        url: "../sys/php.php",
+                        url: "./sys/php.php",
                         data: { action: 'slider', id: id},
                         cache: false,
                         success: function(responce){  $('div[name="slider"]').html(responce); }
@@ -47,7 +47,7 @@ function right(id)
 {
 $.ajax({
                         type: "POST",
-                        url: "../sys/php.php",
+                        url: "./sys/php.php",
                         data: { action: 'slider', id: id},
                         cache: false,
                         success: function(responce){  $('div[name="slider"]').html(responce); }
@@ -111,7 +111,7 @@ if (isset($_GET['sub']))
 {
 
 
-$sql = "SELECT * FROM `portfolio` WHERE `category` = '".$_GET['theme']."' AND `sub` = '".$_GET['sub']."' ORDER BY `portfolio`.`number` ASC";
+$sql = "SELECT * FROM `portfolio` WHERE `category` = '".$_GET['theme']."' AND `sub` = '".$_GET['sub']."' AND `icon`!='1' ORDER BY `portfolio`.`number` ASC";
 $result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
 	echo '<div class="grid_img">';
@@ -139,7 +139,7 @@ else
 
 if ($_GET['theme']=='rent')
 {
-$sql = "SELECT * FROM `portfolio` WHERE `category` = '".$_GET['theme']."' ORDER BY `portfolio`.`number` ASC";
+$sql = "SELECT * FROM `portfolio` WHERE `category` = '".$_GET['theme']."' AND `icon`='1' ORDER BY `portfolio`.`number` ASC";
 $result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
 echo $intro->text.'<div  >';
@@ -148,7 +148,7 @@ $i=0;
 		
 
         echo "<div style=\"vertical-align:middle\" class=\"img_thumb \">
-		<a href=\"portfolio2.php?theme=rent&sub=".$row["sub"]."\"><img src=\"/".$row["path"]."/thumb/".$row["file_name"]."\" alt=\"".$row["file_name"]."\">
+		<a href=\"portfolio.php?theme=rent&sub=".$row["sub"]."\"><img src=\"/".$row["path"]."/thumb/".$row["file_name"]."\" alt=\"".$row["file_name"]."\">
 		<div>".$row["capture"]."</div></a>
 		</div>
 
