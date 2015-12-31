@@ -102,16 +102,27 @@ echo '
 ?>
 		<!-- Scripts -->
 
-
-		<script src="assets/js/jquery.dropotron.min.js"></script>
-			<script src="assets/js/jquery.scrollgress.min.js"></script>
-			<script src="assets/js/skel.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+<div class="go-up button" style="height:30px" title="Вверх" id='ToTop'>Вверх</div>
+		<script src="/tree/assets/js/jquery.dropotron.min.js"></script>
+			<script src="/tree/assets/js/jquery.scrollgress.min.js"></script>
+			<script src="/tree/assets/js/skel.min.js"></script>
+			<script src="/tree/assets/js/util.js"></script>
+			<script src="/tree/assets/js/main.js"></script>
 			
 			<script src="/sys/js/isotope.pkgd.js"></script>
 	
 			<script type="text/javascript">
+
+$(function(){
+ if ($(window).scrollTop()>="250") $("#ToTop").fadeIn("slow")
+ $(window).scroll(function(){
+  if ($(window).scrollTop()<="250") $("#ToTop").fadeOut("slow")
+   else $("#ToTop").fadeIn("slow")
+});	
+$("#ToTop").click(function(){$("html,body").animate({scrollTop:0},"slow")})
+ $("#OnBottom").click(function(){$("html,body").animate({scrollTop:$(document).height()},"slow")})
+	});
+	
   var $grid=$('.grid_img').isotope({
     itemSelector: '.grid-item',
     masonry: {columnWidth: 1}
