@@ -25,11 +25,17 @@ class port_menu
 	var $text;
 	var $number;
 
-function last_num($category)
+function last_num($category, $sub)
 {
 global $mysqli;
-$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."' ORDER BY `portfolio`.`number` DESC LIMIT 0, 1";
+if (isset($sub) && $sub!=0)
+{$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."' 
+AND `sub` = '".$sub."' AND `icon` != '1' ORDER BY `portfolio`.`number` DESC LIMIT 0, 1";
+}
+else{
+$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."' ORDER BY `portfolio`.`number` DESC LIMIT 0, 1";}
 	$result = $mysqli->query($sql);
+
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
@@ -37,14 +43,15 @@ if ($result->num_rows > 0) {
 
 	}//while
 
-	$this->number=$number;
 		
 			
 
 
 
 }
-else {$number=1;}
+else {$number=0;}	
+$this->number=$number;
+
 }
 
 function first_num($category)
@@ -108,7 +115,7 @@ if($param=="ul"){
     while($row = $result->fetch_assoc()) {
 		
 		
-		echo "<li><a href=\"/tree/portfolio2.php?theme=".$row['url']."\">".$row['name']."</a></li>";
+		echo "<li><a href=\"portfolio.php?theme=".$row['url']."\">".$row['name']."</a></li>";
 
 		
 
@@ -173,26 +180,28 @@ if ($result->num_rows > 0)
 	{
 		
 global $mysqli;
-$sql = "SELECT * FROM `portfolio` WHERE `".$what."` = '".$id."'";
+$sql = "SELECT * FROM `portfolio` WHERE `".$what."` = '".$id."' ORDER BY `category`";
 $result = $mysqli->query($sql);
 if ($result->num_rows > 0) 
 {
-
+echo "<table>
+<tr><td>№</td><td>картинка</td><td>подпись</td><td>категория</td><td>подкатегория</td></tr>";
     while($row = $result->fetch_assoc()) {
 		
 		
-		
-		
-
-        echo "<div  class=\"img_thumb\" onclick=\"popup(".$row["id"].")\">
-		<img src=\"/".$row["path"]."/".$row["file_name"]."\" alt=\"".$row["file_name"]."\">
-		</br><span>".$row['capture']."</span>
-		</div>
-
-		";
-		$i++; 
-		if($i>4){$i=0; echo "<div class=\"img_thumb_long\"></div>";
-}
+        echo "
+		<tr style=\"cursor:pointer\" onclick=\"popup(".$row["id"].")\" >
+		<td>".$row['number']."</td>
+		<td><img style=\"max-width:100px; \" 
+		src=\"/".$row["path"]."/thumb/".$row["file_name"]."\" alt=\"".$row["file_name"]."\"></td>
+		<td>".$row['capture']."</td>
+		<td>".$row['category']."</td>";
+		$sql_sub="SELECT `name` FROM `sub_cat` WHERE `id` = '".$row['sub']."'";
+		$result_sub = $mysqli->query($sql_sub);
+		while($row_sub = $result_sub->fetch_assoc()){
+		echo"<td>".$row_sub['name']."</td>";}
+	echo"
+		</tr>";
 
     }	
 	
@@ -212,29 +221,30 @@ if ($result->num_rows > 0) {
 		$order=$row['number'];
 		$path=$row['path'];
 		$capture=$row['capture'];
+		$sub=$row['sub'];
 
 		$category=$row['category'];
 		$left=$row['number']-1;
 		$right=$row['number']+1;
-		$sql_l="SELECT `id` FROM `portfolio` WHERE `category` = '".$category."' AND `number` = '".$left."'";
+		$sql_l="SELECT `id` FROM `portfolio` WHERE `category` = '".$category."' AND `sub` = '".$sub."' AND `number` = '".$left."'";
 		$result_l = $mysqli->query($sql_l);
 		if ($result_l->num_rows > 0) { while($row_l = $result_l->fetch_assoc()) {
 		$id_l=$row_l['id'];}}
 		else {
-			$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."' ORDER BY `portfolio`.`number` DESC LIMIT 0, 1";
+			$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."'  AND `sub` = '".$sub."'  ORDER BY `portfolio`.`number` DESC LIMIT 0, 1";
 	$result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
 		$id_l=$row['id'];	}}}
 		
-		$sql_r="SELECT `id` FROM `portfolio` WHERE `category` = '".$category."' AND `number` = '".$right."'";
+		$sql_r="SELECT `id` FROM `portfolio` WHERE `category` = '".$category."' AND `sub` = '".$sub."' AND `number` = '".$right."'";
 		$result_r = $mysqli->query($sql_r);
 		if ($result_r->num_rows > 0) { while($row_r = $result_r->fetch_assoc()) {
 			
 		$id_r=$row_r['id'];}}
 		else {
-			$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."' ORDER BY `portfolio`.`number` ASC LIMIT 0, 1";
+			$sql="SELECT * FROM `portfolio` WHERE `category` = '".$category."'  AND `sub` = '".$sub."'  ORDER BY `portfolio`.`number` ASC LIMIT 0, 1";
 	$result = $mysqli->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
